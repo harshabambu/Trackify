@@ -22,7 +22,7 @@ function Footer() {
           <ul className="flex justify-center space-x-6">
             <li>
               <a
-                href="https://www.facebook.com"
+                href="#"
                 target="_blank"
                 className="text-teal-400 hover:text-teal-300 transition duration-300"
               >
@@ -31,7 +31,7 @@ function Footer() {
             </li>
             <li>
               <a
-                href="https://www.twitter.com"
+                href="#"
                 target="_blank"
                 className="text-teal-400 hover:text-teal-300 transition duration-300"
               >
@@ -40,7 +40,7 @@ function Footer() {
             </li>
             <li>
               <a
-                href="https://www.linkedin.com"
+                href="#"
                 target="_blank"
                 className="text-teal-400 hover:text-teal-300 transition duration-300"
               >
