@@ -17,7 +17,7 @@ function Header() {
         </li>
         <li className='inline-block py-2 px-3 hover:text-secondary hover:font-bold'>
            <Link to="/register">Register</Link>
-        </li>
+        </li>  
        </ul>
        </div>
     </div>

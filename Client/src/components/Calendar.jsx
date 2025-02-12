@@ -10,24 +10,8 @@ const CalendarView = () => {
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
-    // Set the selected date in the task form
     setNewTask({ ...newTask, date: date.toLocaleDateString() });
-    // Scroll to the Add Task section after date selection
-    document.getElementById("addTaskSection").scrollIntoView({
-      behavior: "smooth",
-    });
-  };
-
-  const handleTitleChange = (e) => {
-    setNewTask({ ...newTask, title: e.target.value });
-  };
-
-  const handleDescriptionChange = (e) => {
-    setNewTask({ ...newTask, description: e.target.value });
-  };
-
-  const handlePriorityChange = (e) => {
-    setNewTask({ ...newTask, priority: e.target.value });
+    document.getElementById("addTaskSection").scrollIntoView({ behavior: "smooth" });
   };
 
   const handleTaskSubmit = () => {
@@ -48,8 +32,8 @@ const CalendarView = () => {
   const renderTasksForSelectedDate = () => {
     const tasksForDate = tasks.filter((task) => task.date === selectedDate.toLocaleDateString());
     return (
-      <div className="mt-4">
-        <h3 className="text-xl font-semibold text-gray-700 mb-2">Tasks for {selectedDate.toLocaleDateString()}</h3>
+      <div className="overflow-auto max-h-72">
+        <h3 className="text-xl font-semibold text-gray-700 mb-4">Tasks for {selectedDate.toLocaleDateString()}</h3>
         {tasksForDate.length === 0 ? (
           <p className="text-gray-500">No tasks added for this date.</p>
         ) : (
@@ -87,29 +71,26 @@ const CalendarView = () => {
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-lg border border-gray-200">
-      <h1 className="text-4xl font-bold text-gray-800 mb-8">Calendar</h1>
+    <div className="p-6 bg-white rounded-lg shadow-lg border border-gray-200 h-full flex flex-col space-y-6">
+      <h1 className="text-4xl font-bold text-gray-800 mb-4">Calendar</h1>
 
-      {/* Flex Container */}
-      <div className="flex space-x-8">
-        {/* Calendar Section (Left) */}
-        <div className="flex-shrink-0 w-1/3">
-          <div className="mb-6">
-            <Calendar
-              onChange={handleDateChange}
-              value={selectedDate}
-              className="border border-gray-300 rounded-md shadow-lg p-4"
-            />
-          </div>
+      <div className="flex flex-grow overflow-hidden space-x-8">
+        {/* Calendar Section */}
+        <div className="w-1/3 overflow-auto">
+          <Calendar
+            onChange={handleDateChange}
+            value={selectedDate}
+            className="border border-gray-300 rounded-md shadow-lg p-4"
+          />
         </div>
 
-        {/* Task List Section (Right) */}
-        <div className="flex-grow">
+        {/* Task List Section */}
+        <div className="flex-grow overflow-auto">
           {renderTasksForSelectedDate()}
         </div>
       </div>
 
-      {/* Task Input Section (Bottom) */}
+      {/* Task Input Section */}
       <div id="addTaskSection" className="mt-6">
         <h3 className="text-xl font-semibold text-gray-700 mb-2">Add Task</h3>
         <div className="mb-4">
@@ -120,7 +101,7 @@ const CalendarView = () => {
             type="text"
             id="title"
             value={newTask.title}
-            onChange={handleTitleChange}
+            onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
             className="w-full p-3 border border-gray-300 rounded-md"
             placeholder="Enter task title"
           />
@@ -132,7 +113,7 @@ const CalendarView = () => {
           <textarea
             id="description"
             value={newTask.description}
-            onChange={handleDescriptionChange}
+            onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
             className="w-full p-3 border border-gray-300 rounded-md"
             placeholder="Enter task description"
           />
@@ -144,22 +125,13 @@ const CalendarView = () => {
           <select
             id="priority"
             value={newTask.priority}
-            onChange={handlePriorityChange}
+            onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
             className="w-full p-3 border border-gray-300 rounded-md"
           >
             <option value="notImportant">Not Important</option>
             <option value="important">Important</option>
             <option value="veryImportant">Very Important</option>
           </select>
-        </div>
-        <div className="mb-4">
-          <label className="block text-lg font-semibold mb-2">Task Date</label>
-          <input
-            type="text"
-            value={newTask.date}
-            readOnly
-            className="w-full p-3 border border-gray-300 rounded-md bg-gray-100"
-          />
         </div>
         <button
           onClick={handleTaskSubmit}

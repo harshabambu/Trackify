@@ -5,6 +5,8 @@ import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
+import Tasking from './components/Tasking';
+import CalendarView from './components/Calendar';
 
 const browserRouter = createBrowserRouter([
   {
@@ -14,7 +16,15 @@ const browserRouter = createBrowserRouter([
       { path: '', element: <Home /> },
       { path: 'login', element: <Login /> },
       { path: 'register', element: <Register /> },
-      { path: 'dashboard', element: <Dashboard /> },  // Added this route for Dashboard
+      {
+        path: 'dashboard',
+        element: <Dashboard />,
+        children: [
+          { index: true, element: <div>Welcome to your dashboard!</div> },  // Default view for /dashboard
+          { path: 'tasking', element: <Tasking /> },
+          { path: 'calendar', element: <CalendarView /> },
+        ],
+      },
     ],
   },
 ]);
