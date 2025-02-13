@@ -1,0 +1,90 @@
+[33mcommit 8cdeb245ec7848c5f79f3c7243fae4a31caa4d93[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Merge: 985f8f9 a1329ad
+Author: harsha vardhan <harshabambu@gmail.com>
+Date:   Wed Feb 12 23:26:21 2025 +0530
+
+    Merge branch 'main' of https://github.com/harshabambu/Trackify
+
+[33mcommit 985f8f90f08e355f6bb1bb7f980fd7f8dde5c9b4[m
+Author: harsha vardhan <harshabambu@gmail.com>
+Date:   Wed Feb 12 23:18:55 2025 +0530
+
+    changed some code
+
+[33mcommit a1329aded47beb7ef4bfd3bd82b6f809586a1ceb[m
+Author: Siddhartha Yalamanchili <sidduyalamanchili3@gmail.com>
+Date:   Wed Feb 12 07:17:10 2025 +0530
+
+    added the tracking compete and games
+
+[33mcommit d781a536bc39260679e2888cc3a720fb243b7a46[m
+Author: Siddhartha Yalamanchili <sidduyalamanchili3@gmail.com>
+Date:   Wed Feb 5 21:35:48 2025 +0530
+
+    added the tasking and calender segment
+
+[33mcommit 4742b5d8c4ae037f776cffada90779c33825a961[m
+Author: Siddhartha Yalamanchili <sidduyalamanchili3@gmail.com>
+Date:   Sun Feb 2 21:02:39 2025 +0530
+
+    Calendar section added
+
+[33mcommit 73a3e339de246667c6b239d7ad4d1d56e4cf9616[m
+Author: Siddhartha Yalamanchili <sidduyalamanchili3@gmail.com>
+Date:   Sat Feb 1 00:31:05 2025 +0530
+
+    Tasks page completed
+
+[33mcommit 18ae5db02af14c768f2fb7b7ed8878c4e4a9891d[m
+Author: Siddhartha Yalamanchili <sidduyalamanchili3@gmail.com>
+Date:   Thu Jan 30 18:53:02 2025 +0530
+
+    login and register and dashboard completed
+
+[33mcommit e9dcab8c6cb3099c0f5843e428524b943ea7e05b[m
+Author: harsha vardhan <harshabambu@gmail.com>
+Date:   Wed Jan 15 19:36:56 2025 +0530
+
+    footer links edited
+
+[33mcommit 4c48699d4df6db1c21a3fe4c7011b548ce4abf34[m
+Author: harsha vardhan <harshabambu@gmail.com>
+Date:   Sun Jan 12 19:36:36 2025 +0530
+
+    Home page is Completed..
+
+[33mcommit e5665766f3eb0dff2cb8d9e9427483ab5eff2d53[m
+Author: harsha vardhan <harshabambu@gmail.com>
+Date:   Thu Jan 9 20:55:55 2025 +0530
+
+    footer
+
+[33mcommit 045edecf6df8e60f1c3e01aaacd4b4310158ca2d[m
+Author: harsha vardhan <harshabambu@gmail.com>
+Date:   Thu Jan 9 20:48:32 2025 +0530
+
+    header footer is created
+
+[33mcommit 74bb83fcc92142eff01a5a82ca1266276bb82a36[m
+Author: harsha vardhan <harshabambu@gmail.com>
+Date:   Wed Jan 1 11:41:54 2025 +0530
+
+    created react and tailwind css imported
+
+[33mcommit d9f6cdfb57486255db571fba3e40bfe6de0b354b[m
+Author: harsha vardhan <harshabambu@gmail.com>
+Date:   Wed Jan 1 11:32:24 2025 +0530
+
+    initializing..
+
+[33mcommit 5efd7edbc22c42775cf194636bd783baa9382740[m
+Author: harsha vardhan <harshabambu@gmail.com>
+Date:   Wed Jan 1 11:30:55 2025 +0530
+
+    sample test
+
+[33mcommit 56800cf9d21acb26bc3f9c8dfb81bb1cd282a815[m
+Author: harsha vardhan <harshabambu@gmail.com>
+Date:   Wed Jan 1 11:29:46 2025 +0530
+
+    first commit
