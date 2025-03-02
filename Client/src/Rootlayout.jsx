@@ -1,16 +1,17 @@
-import React from 'react'
-import { Outlet } from 'react-router-dom'
-import Footer from './components/Footer'
-import Header from './components/Header'
-
-function Rootlayout() {
+import React from 'react';
+import { Outlet } from 'react-router-dom';
+import Header from './components/Header';
+import Footer from './components/Footer';
+const Rootlayout = () => {
   return (
-    <div className="bg-black  font-poppins">
-        <Header />
-        <div className='min-h-screen bg-gray-300'><Outlet/></div>
-        <Footer/>
+    <div className="min-h-screen flex flex-col bg-gray-100">
+      <Header />
+      <main className="flex-1 p-6">
+        <Outlet />
+      </main>
+      <Footer/>
     </div>
-  )
-}
+  );
+};
 
-export default Rootlayout
+export default Rootlayout;
