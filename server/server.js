@@ -22,7 +22,7 @@ mongoose
 // ✅ Use Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
-app.use("/api/collab", collabRoutes);
+app.use("/api/collaboration", collabRoutes);
 app.use("/api/notifications", notificationRoutes);
 
 // ✅ Fix "Port Already in Use" Error

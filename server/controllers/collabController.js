@@ -1,17 +1,20 @@
 const Collaboration = require("../models/Collaboration");
+const Task = require("../models/Task");
 const User = require("../models/User");
 
-// ✅ Search Users
+// Search Users
+// Search Users
 exports.searchUsers = async (req, res) => {
   try {
-    const { email } = req.query;
-    if (!email) return res.status(400).json({ error: "Email query required" });
-
-    console.log("🔍 Searching for users with email:", email);
-
-    const users = await User.find({ email: { $regex: email, $options: "i" } }).select("email _id");
-
-    console.log("✅ Users found:", users);
+    const { search } = req.query; // Get search term from query parameter
+    let users;
+    if (search) {
+      users = await User.find({
+        username: { $regex: search, $options: "i" }, // Case-insensitive search
+      }).select("username email _id");
+    } else {
+      users = await User.find({}).select("username email _id");
+    }
     res.json(users);
   } catch (error) {
     console.error("🚨 Error searching users:", error);
@@ -19,33 +22,30 @@ exports.searchUsers = async (req, res) => {
   }
 };
 
-// ✅ Send Request
+// Send Request
 exports.sendRequest = async (req, res) => {
   try {
-    const { sender, receiver } = req.body;
+    const { senderId, receiverId } = req.body;
 
-    if (sender === receiver) {
+    if (senderId === receiverId) {
       return res.status(400).json({ error: "You cannot send a request to yourself" });
     }
 
-    // Check if a request already exists
     const existingRequest = await Collaboration.findOne({
       $or: [
-        { sender, receiver },
-        { sender: receiver, receiver: sender }
+        { sender: senderId, receiver: receiverId },
+        { sender: receiverId, receiver: senderId },
       ],
-      status: "pending",
+      status: { $in: ["pending", "accepted"] },
     });
 
     if (existingRequest) {
-      return res.status(400).json({ error: "Request already sent or pending" });
+      return res.status(400).json({ error: "Request already exists" });
     }
 
-    // Create a new request
-    const request = new Collaboration({ sender, receiver, status: "pending" });
+    const request = new Collaboration({ sender: senderId, receiver: receiverId });
     await request.save();
 
-    console.log("✅ Request sent:", request);
     res.status(201).json({ message: "Request sent successfully", request });
   } catch (error) {
     console.error("🚨 Error sending request:", error);
@@ -53,7 +53,7 @@ exports.sendRequest = async (req, res) => {
   }
 };
 
-// ✅ Accept Request - Ensure this function exists!
+// Accept Request
 exports.acceptRequest = async (req, res) => {
   try {
     const { requestId } = req.params;
@@ -63,46 +63,77 @@ exports.acceptRequest = async (req, res) => {
       return res.status(404).json({ error: "Request not found" });
     }
 
-    if (request.status === "accepted") {
-      return res.status(400).json({ error: "Request is already accepted" });
+    if (request.status !== "pending") {
+      return res.status(400).json({ error: "Request already processed" });
     }
 
     request.status = "accepted";
     await request.save();
 
-    res.status(200).json({ message: "Request accepted successfully" });
+    res.status(200).json({ message: "Request accepted successfully", request });
   } catch (error) {
     console.error("🚨 Error in acceptRequest:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-// ✅ Get Friends
-exports.getFriends = async (req, res) => {
+// Get Collaboration Requests
+exports.getRequests = async (req, res) => {
   try {
     const { userId } = req.params;
-    const friends = await Collaboration.find({
+    const requests = await Collaboration.find({
       $or: [{ sender: userId }, { receiver: userId }],
-      status: "accepted",
-    });
+    }).populate("sender", "username").populate("receiver", "username");
 
-    res.json(friends);
+    res.json(requests);
   } catch (error) {
-    console.error("🚨 Error in getFriends:", error);
+    console.error("🚨 Error in getRequests:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-// ✅ Assign Task
+// Assign Task
 exports.assignTask = async (req, res) => {
   try {
-    const { sender, receiver, task } = req.body;
-    
-    // Your logic to assign tasks (you need to define this)
-    
-    res.status(200).json({ message: "Task assigned successfully" });
+    const { assignerId, assigneeId, title, description, priority, deadline } = req.body;
+
+    const collaboration = await Collaboration.findOne({
+      $or: [
+        { sender: assignerId, receiver: assigneeId },
+        { sender: assigneeId, receiver: assignerId },
+      ],
+      status: "accepted",
+    });
+
+    if (!collaboration) {
+      return res.status(403).json({ error: "You can only assign tasks to accepted collaborators" });
+    }
+
+    const task = new Task({
+      title,
+      description,
+      status: "Pending",
+      priority: priority || "Medium",
+      deadline: deadline || null,
+      userId: assigneeId,
+    });
+    await task.save();
+
+    res.status(201).json({ message: "Task assigned successfully", task });
   } catch (error) {
     console.error("🚨 Error in assignTask:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Get Tasks
+exports.getTasks = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const tasks = await Task.find({ userId }).populate("userId", "username");
+    res.json(tasks);
+  } catch (error) {
+    console.error("🚨 Error in getTasks:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

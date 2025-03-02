@@ -2,17 +2,19 @@ const express = require("express");
 const {
   searchUsers,
   sendRequest,
-  acceptRequest,  // Ensure this function exists
-  getFriends,
+  acceptRequest,
+  getRequests,
   assignTask,
-} = require("../controllers/collabController");
+  getTasks,
+} = require("../controllers/collabController"); // Corrected controller name
 
 const router = express.Router();
 
-router.get("/search", searchUsers);
+router.get("/users", searchUsers);
 router.post("/request", sendRequest);
-router.put("/accept/:requestId", acceptRequest);  // Ensure this is defined
-router.get("/friends/:userId", getFriends);
-router.post("/assign-task", assignTask);
+router.put("/accept/:requestId", acceptRequest);
+router.get("/requests/:userId", getRequests);
+router.post("/tasks", assignTask);
+router.get("/tasks/:userId", getTasks);
 
 module.exports = router;
