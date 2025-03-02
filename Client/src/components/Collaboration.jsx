@@ -14,32 +14,38 @@ export default function Collaboration() {
     priority: "Medium",
     deadline: "",
   });
+  const [loading, setLoading] = useState(true); // Add loading state
 
- useEffect(() => {
-  if (!user || !user.userId) return;
+  useEffect(() => {
+    if (!user || !user.userId) return;
 
-  fetch(`http://localhost:5000/api/collaboration/users?search=${encodeURIComponent(search)}`)
-    .then((res) => res.json())
-    .then((data) => setUsers(data.filter((u) => u._id !== user.userId)))
-    .catch((err) => console.error("🚨 Error fetching users:", err));
+    setLoading(true);
+    Promise.all([
+      fetch(`http://localhost:5000/api/collaboration/users?search=${encodeURIComponent(search)}`)
+        .then((res) => res.json())
+        .then((data) => setUsers(data.filter((u) => u._id !== user.userId)))
+        .catch((err) => console.error("🚨 Error fetching users:", err)),
 
-  fetch(`http://localhost:5000/api/collaboration/requests/${user.userId}`)
-    .then((res) => res.json())
-    .then((data) => setRequests(data))
-    .catch((err) => console.error("🚨 Error fetching requests:", err));
+      fetch(`http://localhost:5000/api/collaboration/requests/${user.userId}`)
+        .then((res) => res.json())
+        .then((data) => setRequests(data))
+        .catch((err) => console.error("🚨 Error fetching requests:", err)),
 
-  fetch(`http://localhost:5000/api/collaboration/tasks/${user.userId}`)
-    .then((res) => {
-      if (!res.ok) {
-        return res.text().then((text) => {
-          throw new Error(`Server returned ${res.status}: ${text}`);
-        });
-      }
-      return res.json();
-    })
-    .then((data) => setTasks(data))
-    .catch((err) => console.error("🚨 Error fetching tasks:", err));
-}, [user, search]);  const sendFriendRequest = async (receiverId) => {
+      fetch(`http://localhost:5000/api/collaboration/tasks/${user.userId}`)
+        .then((res) => {
+          if (!res.ok) {
+            return res.text().then((text) => {
+              throw new Error(`Server returned ${res.status}: ${text}`);
+            });
+          }
+          return res.json();
+        })
+        .then((data) => setTasks(data))
+        .catch((err) => console.error("🚨 Error fetching tasks:", err)),
+    ]).finally(() => setLoading(false));
+  }, [user, search]);
+
+  const sendFriendRequest = async (receiverId) => {
     try {
       const response = await fetch("http://localhost:5000/api/collaboration/request", {
         method: "POST",
@@ -67,11 +73,7 @@ export default function Collaboration() {
       });
       const data = await response.json();
       if (response.ok) {
-        setRequests(
-          requests.map((req) =>
-            req._id === requestId ? { ...req, status: "accepted" } : req
-          )
-        );
+        setRequests(requests.map((req) => (req._id === requestId ? { ...req, status: "accepted" } : req)));
         toast.success("Friend request accepted!");
       } else {
         toast.error(data.error);
@@ -114,42 +116,73 @@ export default function Collaboration() {
     }
   };
 
+  const completeTask = async (taskId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/collaboration/tasks/${taskId}/complete`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setTasks(tasks.map((task) => (task._id === taskId ? data.task : task)));
+        toast.success("Task marked as completed!");
+      } else {
+        toast.error(data.error);
+      }
+    } catch (err) {
+      console.error("🚨 Error completing task:", err);
+      toast.error("Error completing task");
+    }
+  };
+
   const handleTaskFormChange = (e) => {
     setTaskForm({ ...taskForm, [e.target.name]: e.target.value });
   };
+
+  const assignedByMe = tasks.filter((task) => task.assignerId?._id === user.userId);
+  const assignedToMe = tasks.filter((task) => task.userId?._id === user.userId);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <p className="text-gray-600 text-lg">Loading...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
-      <h1 className="text-2xl font-semibold text-gray-900 mb-6">Collaboration</h1>
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center p-6 font-sans">
+      <h1 className="text-3xl font-bold text-gray-800 mb-8">Collaboration Dashboard</h1>
 
-      <input
-        type="text"
-        placeholder="Search users..."
-        className="w-full max-w-lg p-3 border rounded-lg shadow-sm mb-6"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-
-      <div className="w-full max-w-3xl bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Users</h2>
+      {/* Search and Users */}
+      <div className="w-full max-w-4xl bg-white shadow-md rounded-lg p-6 mb-6">
+        <h2 className="text-2xl font-semibold text-gray-700 mb-4">Find Collaborators</h2>
+        <input
+          type="text"
+          placeholder="Search users by username..."
+          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
         {users.length === 0 ? (
-          <p className="text-gray-600 text-center">No users found.</p>
+          <p className="text-gray-500 text-center">No users found.</p>
         ) : (
-          <ul className="divide-y divide-gray-300">
-            {users.map((u) => ( // Removed client-side filtering
-              <li key={u._id} className="py-4 flex justify-between items-center">
+          <ul className="space-y-3">
+            {users.map((u) => (
+              <li key={u._id} className="flex justify-between items-center p-3 bg-gray-100 rounded-lg">
                 <div>
-                  <p className="text-lg font-medium text-gray-900">{u.username}</p>
+                  <p className="text-lg font-medium text-gray-800">{u.username}</p>
                   <p className="text-sm text-gray-600">{u.email}</p>
                 </div>
-                <div className="flex space-x-2">
+                <div className="flex space-x-3">
                   <button
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
                     onClick={() => sendFriendRequest(u._id)}
                   >
                     Add Friend
                   </button>
                   <button
-                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+                    className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
                     onClick={() => assignTask(u._id)}
                   >
                     Assign Task
@@ -159,24 +192,26 @@ export default function Collaboration() {
             ))}
           </ul>
         )}
-      </div>      <div className="w-full max-w-3xl bg-white shadow-lg rounded-lg p-6 mt-6">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Collaboration Requests</h2>
+      </div>
+
+      {/* Collaboration Requests */}
+      <div className="w-full max-w-4xl bg-white shadow-md rounded-lg p-6 mb-6">
+        <h2 className="text-2xl font-semibold text-gray-700 mb-4">Collaboration Requests</h2>
         {requests.length === 0 ? (
-          <p className="text-gray-600 text-center">No requests.</p>
+          <p className="text-gray-500 text-center">No pending requests.</p>
         ) : (
-          <ul className="divide-y divide-gray-300">
+          <ul className="space-y-3">
             {requests.map((req) => (
-              <li key={req._id} className="py-4 flex justify-between items-center">
-                <p className="text-lg font-medium text-gray-900">
-                  {req.sender._id === user.userId
-                    ? `Sent to ${req.receiver.username}`
-                    : `From ${req.sender.username}`}
-                  {" - "}
-                  {req.status}
+              <li key={req._id} className="flex justify-between items-center p-3 bg-gray-100 rounded-lg">
+                <p className="text-lg font-medium text-gray-800">
+                  {req.sender?._id === user.userId
+                    ? `Sent to ${req.receiver?.username || "Unknown"}`
+                    : `From ${req.sender?.username || "Unknown"}`}{" "}
+                  - <span className="text-sm text-gray-600">{req.status}</span>
                 </p>
-                {req.status === "pending" && req.receiver._id === user.userId && (
+                {req.status === "pending" && req.receiver?._id === user.userId && (
                   <button
-                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+                    className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
                     onClick={() => acceptFriendRequest(req._id)}
                   >
                     Accept
@@ -188,27 +223,31 @@ export default function Collaboration() {
         )}
       </div>
 
-      <div className="w-full max-w-3xl bg-white shadow-lg rounded-lg p-6 mt-6">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Tasks</h2>
-        <div className="space-y-4 mb-4">
+      {/* Tasks */}
+      <div className="w-full max-w-4xl bg-white shadow-md rounded-lg p-6">
+        <h2 className="text-2xl font-semibold text-gray-700 mb-4">Task Management</h2>
+
+        {/* Task Form */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <input
             type="text"
             name="title"
             placeholder="Task title..."
-            className="w-full p-3 border rounded-lg shadow-sm"
+            className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={taskForm.title}
             onChange={handleTaskFormChange}
           />
           <textarea
             name="description"
             placeholder="Task description..."
-            className="w-full p-3 border rounded-lg shadow-sm"
+            className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={taskForm.description}
             onChange={handleTaskFormChange}
+            rows="3"
           />
           <select
             name="priority"
-            className="w-full p-3 border rounded-lg shadow-sm"
+            className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={taskForm.priority}
             onChange={handleTaskFormChange}
           >
@@ -219,29 +258,63 @@ export default function Collaboration() {
           <input
             type="date"
             name="deadline"
-            className="w-full p-3 border rounded-lg shadow-sm"
+            className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={taskForm.deadline}
             onChange={handleTaskFormChange}
           />
         </div>
-        {tasks.length === 0 ? (
-          <p className="text-gray-600 text-center">No tasks assigned.</p>
-        ) : (
-          <ul className="divide-y divide-gray-300">
-            {tasks.map((task) => (
-              <li key={task._id} className="py-4">
-                <p className="text-lg font-medium text-gray-900">{task.title}</p>
-                <p className="text-sm text-gray-600">
-                  Assigned to {task.userId.username} - {task.status} - Priority: {task.priority}
-                  {task.deadline && ` - Due: ${new Date(task.deadline).toLocaleDateString()}`}
-                </p>
-                {task.description && (
-                  <p className="text-sm text-gray-500">{task.description}</p>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
+
+        {/* Assigned by Me */}
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold text-gray-600 mb-3">Tasks Assigned by Me</h3>
+          {assignedByMe.length === 0 ? (
+            <p className="text-gray-500">No tasks assigned by you.</p>
+          ) : (
+            <ul className="space-y-3">
+              {assignedByMe.map((task) => (
+                <li key={task._id} className="p-3 bg-gray-100 rounded-lg">
+                  <p className="text-lg font-medium text-gray-800">{task.title}</p>
+                  <p className="text-sm text-gray-600">
+                    Assigned to: {task.userId?.username || "Unknown"} | Status: {task.status} | Priority: {task.priority}
+                    {task.deadline && ` | Due: ${new Date(task.deadline).toLocaleDateString()}`}
+                  </p>
+                  {task.description && <p className="text-sm text-gray-500 mt-1">{task.description}</p>}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {/* Assigned to Me */}
+        <div>
+          <h3 className="text-xl font-semibold text-gray-600 mb-3">Tasks Assigned to Me</h3>
+          {assignedToMe.length === 0 ? (
+            <p className="text-gray-500">No tasks assigned to you.</p>
+          ) : (
+            <ul className="space-y-3">
+              {assignedToMe.map((task) => (
+                <li key={task._id} className="p-3 bg-gray-100 rounded-lg flex justify-between items-center">
+                  <div>
+                    <p className="text-lg font-medium text-gray-800">{task.title}</p>
+                    <p className="text-sm text-gray-600">
+                      Assigned by: {task.assignerId?.username || "Unknown"} | Status: {task.status} | Priority: {task.priority}
+                      {task.deadline && ` | Due: ${new Date(task.deadline).toLocaleDateString()}`}
+                    </p>
+                    {task.description && <p className="text-sm text-gray-500 mt-1">{task.description}</p>}
+                  </div>
+                  {task.status === "Pending" && (
+                    <button
+                      className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition"
+                      onClick={() => completeTask(task._id)}
+                    >
+                      Mark Complete
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );

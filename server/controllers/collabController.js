@@ -3,14 +3,13 @@ const Task = require("../models/Task");
 const User = require("../models/User");
 
 // Search Users
-// Search Users
 exports.searchUsers = async (req, res) => {
   try {
-    const { search } = req.query; // Get search term from query parameter
+    const { search } = req.query;
     let users;
     if (search) {
       users = await User.find({
-        username: { $regex: search, $options: "i" }, // Case-insensitive search
+        username: { $regex: search, $options: "i" },
       }).select("username email _id");
     } else {
       users = await User.find({}).select("username email _id");
@@ -116,6 +115,7 @@ exports.assignTask = async (req, res) => {
       priority: priority || "Medium",
       deadline: deadline || null,
       userId: assigneeId,
+      assignerId, // Store assigner
     });
     await task.save();
 
@@ -125,15 +125,40 @@ exports.assignTask = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+// ... (other imports and functions unchanged)
 
-// Get Tasks
 exports.getTasks = async (req, res) => {
   try {
     const { userId } = req.params;
-    const tasks = await Task.find({ userId }).populate("userId", "username");
+    const tasks = await Task.find({
+      $or: [{ userId }, { assignerId: userId }],
+    })
+      .populate("userId", "username") // Populate assignee
+      .populate("assignerId", "username"); // Populate assigner
     res.json(tasks);
   } catch (error) {
     console.error("🚨 Error in getTasks:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Complete Task (unchanged, but included for completeness)
+exports.completeTask = async (req, res) => {
+  try {
+    const { taskId } = req.params;
+    const task = await Task.findById(taskId);
+
+    if (!task) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+
+    task.status = "Completed";
+    task.completedAt = new Date();
+    await task.save();
+
+    res.status(200).json({ message: "Task completed successfully", task });
+  } catch (error) {
+    console.error("🚨 Error in completeTask:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

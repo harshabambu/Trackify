@@ -6,7 +6,8 @@ const {
   getRequests,
   assignTask,
   getTasks,
-} = require("../controllers/collabController"); // Corrected controller name
+  completeTask,
+} = require("../controllers/collabController");
 
 const router = express.Router();
 
@@ -16,5 +17,6 @@ router.put("/accept/:requestId", acceptRequest);
 router.get("/requests/:userId", getRequests);
 router.post("/tasks", assignTask);
 router.get("/tasks/:userId", getTasks);
+router.put("/tasks/:taskId/complete", completeTask); // New route
 
 module.exports = router;
