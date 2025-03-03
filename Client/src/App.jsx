@@ -11,6 +11,7 @@ import Overview from "./components/Overview"; // ✅ New
 import Tasks from "./components/Tasks";
 import Collaboration from "./components/Collaboration";
 import Notifications from "./components/Notifications";
+import Games from "./components/Games";
 
 const ProtectedRoute = ({ element }) => {
   const { user } = useAuth();
@@ -31,6 +32,7 @@ function App() {
             <Route path="tasks" element={<ProtectedRoute element={<Tasks />} />} />
             <Route path="collaboration" element={<ProtectedRoute element={<Collaboration />} />} />
             <Route path="notifications" element={<ProtectedRoute element={<Notifications />} />} />
+            <Route path="games" element={<ProtectedRoute element={<Games />} />} />
           </Route>
         </Route>
       </Routes>

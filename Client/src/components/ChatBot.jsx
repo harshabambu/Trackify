@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { MessageCircle } from "lucide-react"; // Chat icon
+import chatIcon from "../assets/chatbot.jpeg"; // Import image properly
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -8,7 +8,7 @@ const ChatBot = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const genAI = new GoogleGenerativeAI("AIzaSyC4yaO3324fq4XBJyxJ810EmBcFnIO9Jwk"); 
+  const genAI = new GoogleGenerativeAI("AIzaSyC4yaO3324fq4XBJyxJ810EmBcFnIO9Jwk");
   const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
   const handleSendMessage = async () => {
@@ -51,30 +51,37 @@ const ChatBot = () => {
     setInput("");
   };
 
+  // Handle Enter Key Press
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !loading) {
+      handleSendMessage();
+    }
+  };
+
   return (
     <div>
       {/* Floating Chat Icon */}
       <button
-        className="fixed bottom-6 right-6 bg-red-600 text-white p-3 rounded-full shadow-lg"
+        className="fixed bottom-6 right-6 bg-teal-600 text-white p-3 rounded-full shadow-lg"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <MessageCircle size={24} />
+        <img src={chatIcon} alt="Chat Icon" className="w-10 h-10 rounded-full object-cover" />
       </button>
 
       {/* Chatbot Popup */}
       {isOpen && (
         <div className="fixed bottom-16 right-6 w-80 bg-white border shadow-lg rounded-lg p-4">
           <div className="flex justify-between items-center mb-3">
-            <h2 className="text-lg font-semibold">Task Chatbot</h2>
+            <h2 className="text-lg font-semibold text-teal-400">Task Chatbot</h2>
             <button className="text-gray-600" onClick={() => setIsOpen(false)}>✖</button>
           </div>
           <div className="h-60 overflow-y-auto border p-2 bg-gray-100 rounded">
             {messages.map((msg, index) => (
               <div
                 key={index}
-                className={`mb-2 p-2 rounded ${
+                className={`mb-2 p-2 rounded max-w-[80%] ${
                   msg.sender === "user"
-                    ? "bg-red-600 text-white self-end"
+                    ? "bg-teal-600 text-white self-end ml-auto"
                     : "bg-gray-300 text-black self-start"
                 }`}
               >
@@ -89,9 +96,10 @@ const ChatBot = () => {
               placeholder="Ask about your tasks..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyPress} // Trigger send on Enter key
             />
             <button
-              className="bg-red-600 text-white px-3 py-2 rounded"
+              className="bg-teal-600 text-white px-3 py-2 rounded"
               onClick={handleSendMessage}
               disabled={loading}
             >
