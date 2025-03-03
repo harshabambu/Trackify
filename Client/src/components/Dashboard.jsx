@@ -1,6 +1,8 @@
 import React from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext"; // ✅ Import authentication context
+import TaskChatBot from "../components/ChatBot"; // ✅ Import chatbot
+import ChatBot from "../components/ChatBot";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -24,7 +26,7 @@ const Dashboard = () => {
       )}
 
       {/* ✅ Main Content */}
-      <main className="flex-1 p-8 overflow-y-auto">
+      <main className="flex-1 p-8 overflow-y-auto relative">
         {/* ✅ Show a welcome message only on `/dashboard` */}
         {location.pathname === "/dashboard" ? (
           <div className="text-center">
@@ -44,6 +46,9 @@ const Dashboard = () => {
         ) : (
           <Outlet /> // ✅ Render Overview, Tasks, etc.
         )}
+
+        {/* ✅ Add Chatbot Floating Popup */}
+        <ChatBot />
       </main>
     </div>
   );
