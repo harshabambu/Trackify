@@ -50,7 +50,7 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        <main className="flex-1 p-4 md:p-8 overflow-y-auto relative pb-14 md:pb-8">
+        <main className="flex-1 overflow-x-hidden md:p-8 overflow-y-auto relative pb-14 md:pb-8">
           {location.pathname === "/dashboard" ? (
             <div className="text-center max-w-md mx-auto">
               <h1 className="text-2xl md:text-4xl font-bold text-gray-900">

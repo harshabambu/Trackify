@@ -179,7 +179,7 @@ const Overview = () => {
       </div>
 
       {/* Calendar */}
-      <div className="bg-gray-50 p-4 md:p-6 rounded-lg mb-6 shadow-sm">
+      <div className="bg-gray-50 p-4 md:p-6 rounded-lg mb-6 shadow-sm hidden md:block">
         <h2 className="text-base md:text-lg text-gray-600 mb-4">Task Completion Calendar</h2>
         <div className="max-w-full overflow-x-auto">
           <Calendar
@@ -198,7 +198,7 @@ const Overview = () => {
       </div>
 
       {/* Task Table */}
-      <div className="bg-gray-50 p-4 md:p-6 rounded-lg shadow-sm">
+      <div className="bg-gray-50 p-4 md:p-6 rounded-lg shadow-sm ">
         <h2 className="text-base md:text-lg text-gray-600 mb-4">Your Tasks</h2>
         <div className="overflow-x-auto">
           <table className="w-full divide-y divide-gray-200">

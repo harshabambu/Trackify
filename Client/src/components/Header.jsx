@@ -31,7 +31,7 @@ export default function Header() {
           {/* Left Side - Logo */}
           <div className="flex items-center">
             <Link to="/" className="text-4xl font-extrabold text-white">
-              Tracify
+              Trackify
             </Link>
           </div>
 
