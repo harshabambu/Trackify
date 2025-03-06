@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+dotenv.config();
+const DB_URI = process.env.DB_URI;
 
-mongoose.connect('mongodb://localhost:27017/trackify', {
+mongoose.connect(DB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })

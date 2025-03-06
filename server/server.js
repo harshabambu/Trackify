@@ -5,15 +5,18 @@ const authRoutes = require("./routes/authRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 const collabRoutes = require("./routes/collabRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const dotenv = require('dotenv');
+dotenv.config();
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+const DB_URI = process.env.DB_URI;
 
 // ✅ Connect to MongoDB (No Deprecated Options)
 mongoose
-  .connect("mongodb://localhost:27017/tracify")
-  .then(() => console.log("✅ MongoDB Connected Locally"))
+  .connect(DB_URI)
+  .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => {
     console.error("🚨 MongoDB Connection Error:", err);
     process.exit(1); // 🔥 Exit the server if MongoDB fails
