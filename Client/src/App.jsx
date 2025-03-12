@@ -7,7 +7,7 @@ import Home from "./components/Home";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Dashboard from "./components/Dashboard";
-import Overview from "./components/Overview"; // ✅ New
+import Overview from "./components/OverView"; // ✅ New
 import Tasks from "./components/Tasks";
 import Collaboration from "./components/Collaboration";
 import Notifications from "./components/Notifications";
