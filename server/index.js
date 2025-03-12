@@ -10,7 +10,9 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'https://trackify-cilent.vercel.app'
+}));
 const DB_URI = process.env.DB_URI;
 
 // ✅ Connect to MongoDB (No Deprecated Options)
