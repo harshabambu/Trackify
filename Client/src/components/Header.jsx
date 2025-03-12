@@ -18,7 +18,7 @@ export default function Header() {
   useEffect(() => {
     if (!user || !user.userId) return;
 
-    fetch(`http://localhost:5000/api/notifications/${user.userId}`)
+    fetch(`https://trackify-lemon.vercel.app/api/notifications/${user.userId}`)
       .then((res) => res.json())
       .then((data) => setNotifications(data))
       .catch((err) => console.error("🚨 Error fetching notifications:", err));

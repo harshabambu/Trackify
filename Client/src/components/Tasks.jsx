@@ -18,7 +18,7 @@ export default function Tasks() {
   useEffect(() => {
     if (!user || !user.userId) return;
 
-    fetch(`http://localhost:5000/api/tasks?userId=${user.userId}`)
+    fetch(`https://trackify-lemon.vercel.app/api/tasks?userId=${user.userId}`)
       .then((res) => res.json())
       .then((data) => setTasks(Array.isArray(data) ? data : []))
       .catch((err) => console.error("🚨 Error fetching tasks:", err));
@@ -31,7 +31,7 @@ export default function Tasks() {
     try {
       if (taskBeingEdited) {
         const updatedTask = { ...newTask, userId: user.userId };
-        await fetch(`http://localhost:5000/api/tasks/${taskBeingEdited}`, {
+        await fetch(`https://trackify-lemon.vercel.app/api/tasks/${taskBeingEdited}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updatedTask),
@@ -43,7 +43,7 @@ export default function Tasks() {
         setTaskBeingEdited(null);
       } else {
         const newTaskWithUser = { ...newTask, userId: user.userId };
-        const response = await fetch("http://localhost:5000/api/tasks", {
+        const response = await fetch("https://trackify-lemon.vercel.app/api/tasks", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newTaskWithUser),
@@ -68,7 +68,7 @@ export default function Tasks() {
 
   const handleDeleteTask = async (taskId) => {
     try {
-      await fetch(`http://localhost:5000/api/tasks/${taskId}`, { method: "DELETE" });
+      await fetch(`https://trackify-lemon.vercel.app/api/tasks/${taskId}`, { method: "DELETE" });
       setTasks((prev) => prev.filter((task) => task._id !== taskId));
     } catch (err) {
       console.error("🚨 Error deleting task:", err);

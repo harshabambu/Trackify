@@ -24,7 +24,7 @@ export default function Collaboration() {
   const [error, setError] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const BASE_URL = "http://localhost:5000";
+  const BASE_URL = "https://trackify-lemon.vercel.app"
 
   const fetchData = async () => {
     if (!user || !user.userId) return;

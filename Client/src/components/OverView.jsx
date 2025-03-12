@@ -28,7 +28,7 @@ const Overview = () => {
   useEffect(() => {
     if (!user || !user.userId) return;
 
-    fetch(`http://localhost:5000/api/tasks?userId=${user.userId}`)
+    fetch(`https://trackify-lemon.vercel.app/api/tasks?userId=${user.userId}`)
       .then((res) => res.json())
       .then((data) => {
         setTasks(Array.isArray(data) ? data : []);
@@ -64,7 +64,7 @@ const Overview = () => {
 
   const updateTaskStatus = async (_id, newStatus) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/tasks/${_id}`, {
+      const response = await fetch(`https://trackify-lemon.vercel.app/api/tasks/${_id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
